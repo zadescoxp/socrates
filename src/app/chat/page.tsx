@@ -203,8 +203,6 @@ export default function Chat() {
           )}
         </div>
         <div className="flex mt-2 items-center justify-center gap-2">
-        <div className="h-[95%] w-full"></div>
-        <form className="flex mt-2 items-center justify-center gap-2">
           <input
             onChange={handleInputChange}
             className="border-2 border-secondary bg-[transparent] px-6 outline-none w-full py-3 rounded-full"
@@ -225,9 +223,6 @@ export default function Chat() {
             />
           </button>
         </div>
-          <button><Image src={"/assets/mic.svg"} height={40} width={40} alt="Mic" /></button>
-          <button><Image src={"/assets/gallery.svg"} height={45} width={45} alt="Gallery" /></button>
-        </form>
         <p className="text-sm py-2 pl-6 uppercase">Press enter to send</p>
       </div>
     </motion.div>
