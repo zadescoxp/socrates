@@ -7,7 +7,7 @@ import Image from "next/image";
 
 export default function TextCard({ heading, content }: props) {
   return (
-    <div className="bg-secondary text-primary p-10 w-[50rem] h-[15rem] rounded-xl">
+    <div className="bg-secondary text-primary p-10 w-[50rem] min-h-[15rem] rounded-xl">
       <h1 className="text-3xl flex items-center gap-4 mb-4">
         {heading}
         <Image

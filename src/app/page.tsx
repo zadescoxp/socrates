@@ -52,7 +52,7 @@ export default function Home() {
         >
           The Problem of Modern Teaching
         </motion.h1>
-        <div className="flex justify-evenly items-start gap-24">
+        <div className="flex justify-evenly gap-10">
           <TextCard
             heading="Lack of Critical Thinking"
             content="
