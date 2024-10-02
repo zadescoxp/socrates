@@ -52,6 +52,17 @@ export default function Chat() {
     // Simulate a mock API call
 
     const payload = {
+      history: [
+        ...messages.map((r) => ({
+          role: r.sender === "bot" ? "model" : "user",
+          parts: [
+            {
+              text: r.content,
+            },
+          ],
+        })),
+      ],
+
       message: inputValue.trim(),
     };
     const res = await api.post(`${process.env.BACKEND_URI}/`, payload);
@@ -117,9 +128,9 @@ export default function Chat() {
 
                 {msg.images && (
                   <div className="  w-full mt-4">
-                    <p className=" font-semibold ml-0.5 text-secondary">
+                    {/* <p className=" font-semibold ml-0.5 text-secondary">
                       Related Images
-                    </p>
+                    </p> */}
                     <ul className="list-inside -mt-2 flex gap-1 overflow-x-scroll">
                       {msg.images.map((image, index) => (
                         <Link
@@ -142,9 +153,9 @@ export default function Chat() {
                 )}
                 {msg.videos && (
                   <div className="  w-full mt-1">
-                    <p className=" font-semibold ml-0.5  text-secondary">
+                    {/* <p className=" font-semibold ml-0.5  text-secondary">
                       Related Videos
-                    </p>
+                    </p> */}
                     <ul className="list-inside flex -mt-2 gap-1 overflow-x-scroll">
                       {msg.videos.map((video, index) => (
                         <Link
@@ -174,9 +185,6 @@ export default function Chat() {
                 )}
                 {msg.followUpQuestions && (
                   <div className="  w-full">
-                    <p className=" font-semibold ml-0.5 text-secondary">
-                      Follow Up Questions
-                    </p>
                     <ul className="list-inside">
                       {msg.followUpQuestions.map((question, index) => (
                         <li
