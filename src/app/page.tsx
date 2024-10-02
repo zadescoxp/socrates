@@ -63,7 +63,38 @@ export default function Home() {
           img="/assets/DOA.jpg"
         />
       </div>
-
+      <div className="w-screen py-[4rem] px-4">
+        <motion.h1
+          variants={textVar}
+          initial="initial"
+          animate="animate"
+          className="relative font-bold text-7xl uppercase flex items-center gap-4 mb-4 tracking-tight"
+        >
+          The Problem of Modern Teaching
+        </motion.h1>
+        <div className="flex justify-evenly gap-10">
+          <TextCard
+            heading="Lack of Critical Thinking"
+            content="
+              Traditional teaching methods focus heavily on direct instruction,
+              which limits students' ability to develop independent
+              critical thinking skills."
+          />
+          <TextCard
+            heading="Shallow Understanding"
+            content="
+              Many students rely on memorization rather than truly understanding
+              concepts, leading to surface-level knowledge that doesn't
+              promote deeper comprehension."
+          />
+          <TextCard
+            heading="Dependence on Answers"
+            content="
+              Current educational tools often provide direct answers, preventing
+              students from learning how to solve problems on their own, which
+              hinders long-term learning and problem-solving abilities."
+          />
+        </div>
       <motion.h1 variants={textVar} initial="initial" animate="animate" viewport={{ once: true }} className="flex items-center gap-4 relative tracking-tight uppercase px-5 font-bold text-7xl py-10">How we solve the problem <Image src={"/assets/link-dark.svg"} height={50} width={50} alt="" /></motion.h1>
       <div className="flex items-center justify-center gap-5 px-5">
         <TextCard

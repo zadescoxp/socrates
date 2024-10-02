@@ -1,24 +1,235 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import Image from "next/image";
-
-
+import { motion } from "framer-motion";
+import { slideUp } from "@/utils/variant";
+import { useEffect, useRef, useState } from "react";
+import api from "@/utils/api";
+import RenderMarkdown from "@/utils/rednerMarkdown";
+import Link from "next/link";
+interface Message {
+  id: number;
+  sender: "user" | "bot";
+  content: string;
+  followUpQuestions?: [string];
+  sources?: [[{ title: string; link: string }]];
+  videos?: [{ imageUrl: string; link: string }];
+  images?: [{ title: string; link: string }];
+}
+export interface ResponseContent {
+  answer: string;
+  followUpQuestions: [string];
+  sources: [[{ title: string; link: string }]];
+  videos?: [{ imageUrl: string; link: string }];
+  images?: [{ title: string; link: string }];
+}
 export default function Chat() {
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: 0,
+      sender: "bot",
+      content:
+        "This is a minimal viable product (MVP) developed in just one day, so it may be a bit slow. More features and improvements are on the way!",
+    },
+  ]);
+  const [inputValue, setInputValue] = useState("");
+  const [loading, setLoading] = useState(false);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const handleSendMessage = async () => {
+    if (inputValue.trim() === "") return;
+
+    // Add user message
+    const userMessage = {
+      id: Date.now(),
+      sender: "user" as const,
+      content: inputValue.trim(),
+    };
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
+    setInputValue("");
+    setLoading(true);
+
+    // Simulate a mock API call
+
+    const payload = {
+      message: inputValue.trim(),
+    };
+    const res = await api.post(`${process.env.BACKEND_URI}/`, payload);
+    if (res.success) {
+      const botResponse = {
+        id: Date.now() + 1,
+        sender: "bot" as const,
+        content: (res.data as ResponseContent).answer,
+        followUpQuestions: (res.data as ResponseContent).followUpQuestions,
+        sources: (res.data as ResponseContent).sources,
+        videos: (res.data as ResponseContent).videos,
+        images: (res.data as ResponseContent).images,
+      };
+      console.log(botResponse);
+
+      setMessages((prevMessages) => [...prevMessages, botResponse]);
+    }
+    setLoading(false);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!loading)
+      if (e.key === "Enter") {
+        handleSendMessage();
+      }
+  };
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, [messages, loading]);
   return (
-    <div className="h-[80dvh] flex justify-center items-center w-screen bg-primary">
+    <motion.div
+      variants={slideUp}
+      initial="initial"
+      animate="animate"
+      className="h-[80dvh] flex justify-center items-center w-screen bg-primary"
+    >
       <div className="flex-col h-full w-3/4 relative">
+        <div
+          ref={chatContainerRef}
+          className="h-[95%] w-full flex flex-col pb-10 gap-4 overflow-scroll"
+        >
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`flex text-base ${
+                msg.sender === "user" ? "justify-end" : "justify-start"
+              }`}
+            >
+              <div
+                className={`px-4 py-2 rounded-lg max-w-[90%] ${
+                  msg.sender === "user"
+                    ? "bg-[#e2daabb6] rounded-lg"
+                    : "bg-[#e2daabb6] rounded-lg"
+                }`}
+              >
+                <RenderMarkdown markdown={msg.content} />
+
+                {msg.images && (
+                  <div className="  w-full mt-4">
+                    <p className=" font-semibold ml-0.5 text-secondary">
+                      Related Images
+                    </p>
+                    <ul className="list-inside -mt-2 flex gap-1 overflow-x-scroll">
+                      {msg.images.map((image, index) => (
+                        <Link
+                          href={image.link}
+                          target="_blank"
+                          key={index}
+                          className="my-2.5 p-1.5 pl-0.5 pr-2 text-sm rounded-xl"
+                        >
+                          <img
+                            src={image.link}
+                            alt={image.title}
+                            height={400}
+                            width={400}
+                            className=" h-28 w-full object-cover min-w-48  rounded-xl"
+                          />
+                        </Link>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {msg.videos && (
+                  <div className="  w-full mt-1">
+                    <p className=" font-semibold ml-0.5  text-secondary">
+                      Related Videos
+                    </p>
+                    <ul className="list-inside flex -mt-2 gap-1 overflow-x-scroll">
+                      {msg.videos.map((video, index) => (
+                        <Link
+                          href={video.link}
+                          target="_blank"
+                          key={index}
+                          className="my-2.5 p-1.5 pl-0.5 pr-2 text-sm rounded-xl"
+                        >
+                          <img
+                            src={video.imageUrl.replace(
+                              "mqdefault.jpg",
+                              "maxresdefault.jpg"
+                            )}
+                            onError={(e) =>
+                              (e.currentTarget.src =
+                                "https://www.mariposakids.co.nz/wp-content/uploads/2014/08/image-placeholder2.jpg")
+                            }
+                            alt={video.imageUrl}
+                            height={800}
+                            width={800}
+                            className=" h-32 w-full object-cover min-w-60  rounded-xl"
+                          />
+                        </Link>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {msg.followUpQuestions && (
+                  <div className="  w-full">
+                    <p className=" font-semibold ml-0.5 text-secondary">
+                      Follow Up Questions
+                    </p>
+                    <ul className="list-inside">
+                      {msg.followUpQuestions.map((question, index) => (
+                        <li
+                          onClick={() => setInputValue(question)}
+                          key={index}
+                          className=" hover:bg-[#f2e6a5e0] cursor-pointer transition-all duration-500 bg-[#e2daabe0] my-2.5 p-1.5 px-2 text-sm rounded-xl"
+                        >
+                          <RenderMarkdown markdown={question} />
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+
+          {loading && (
+            <div className="flex justify-start">
+              <div className="px-4 py-2 rounded-lg rounded-bl-none max-w-[90%]  bg-[#e2daabb6] text-base  animate-pulse">
+                Thinking...
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="flex mt-2 items-center justify-center gap-2">
         <div className="h-[95%] w-full"></div>
         <form className="flex mt-2 items-center justify-center gap-2">
           <input
+            onChange={handleInputChange}
             className="border-2 border-secondary bg-[transparent] px-6 outline-none w-full py-3 rounded-full"
             type="text"
+            value={inputValue}
+            onKeyDown={handleKeyPress}
             placeholder="Let's Chat"
           />
+          <button>
+            <Image src={"/assets/mic.svg"} height={40} width={40} alt="Mic" />
+          </button>
+          <button>
+            <Image
+              src={"/assets/gallery.svg"}
+              height={45}
+              width={45}
+              alt="Gallery"
+            />
+          </button>
+        </div>
           <button><Image src={"/assets/mic.svg"} height={40} width={40} alt="Mic" /></button>
           <button><Image src={"/assets/gallery.svg"} height={45} width={45} alt="Gallery" /></button>
         </form>
         <p className="text-sm py-2 pl-6 uppercase">Press enter to send</p>
       </div>
-    </div>
+    </motion.div>
   );
 }
