@@ -8,14 +8,14 @@ import Footer from "@/components/footer";
 
 export default function Home() {
   return (
-    <div className="">
+    <div className="overflow-x-hidden">
       <div className="w-screen leading-none tracking-tighter p-2 py-[4rem]">
         <div>
           <motion.h1
             variants={textVar}
             initial="initial"
             animate="animate"
-            className="relative font-bold text-[200px]"
+            className="relative font-bold text-[200px] max-md:text-[120px] max-sm:text-[70px]"
           >
             LEARN
           </motion.h1>
@@ -23,7 +23,7 @@ export default function Home() {
             variants={textVar}
             initial="initial"
             animate="animate"
-            className="relative font-bold text-[200px]"
+            className="relative font-bold text-[200px] max-md:text-[120px] max-sm:text-[70px]"
           >
             WITH
           </motion.h1>
@@ -31,7 +31,7 @@ export default function Home() {
             variants={textVar}
             initial="initial"
             animate="animate"
-            className="relative font-bold text-[200px] flex items-center gap-4"
+            className="relative font-bold text-[200px] flex items-center gap-4 max-md:text-[120px] max-sm:text-[70px] max-md:flex-wrap"
           >
             SOCRATES
             <Image
@@ -39,12 +39,13 @@ export default function Home() {
               alt="Vector"
               height={150}
               width={150}
+              className="w-auto max-md:h-[70px] max-sm:h-[50px]"
             />
           </motion.h1>
         </div>
       </div>
-      <motion.h1 variants={textVar} initial="initial" animate="animate" viewport={{ once: true }} className="relative flex items-center gap-4 tracking-tight uppercase px-5 font-bold text-7xl py-10">Problems in Modern Education <Image src={"/assets/link-dark.svg"} height={50} width={50} alt="" /></motion.h1>
-      <div className="flex items-center justify-center gap-5 px-5">
+      <motion.h1 variants={textVar} initial="initial" animate="animate" viewport={{ once: true }} className="relative flex items-center gap-4 tracking-tight uppercase px-5 font-bold text-7xl py-10 max-md:text-6xl">Problems in Modern Education <Image className="max-md:hidden" src={"/assets/link-dark.svg"} height={50} width={50} alt="" /></motion.h1>
+      <div className="flex items-center justify-center gap-5 px-5 max-lg:flex-wrap">
         <TextCard
           heading="Lack of Critical Thinking"
           content="Traditional teaching methods focus heavily on direct instruction, which limits students' ability to develop independent critical thinking skills."
@@ -63,8 +64,8 @@ export default function Home() {
           img="/assets/DOA.jpg"
         />
       </div>
-      <motion.h1 variants={textVar} initial="initial" animate="animate" viewport={{ once: true }} className="flex items-center gap-4 relative tracking-tight uppercase px-5 font-bold text-7xl py-10">How we solve the problem <Image src={"/assets/link-dark.svg"} height={50} width={50} alt="" /></motion.h1>
-      <div className="flex items-center justify-center gap-5 px-5">
+      <motion.h1 variants={textVar} initial="initial" animate="animate" viewport={{ once: true }} className="flex items-center gap-4 relative tracking-tight uppercase px-5 font-bold text-7xl py-10 max-md:text-6xl">How we solve the problem <Image className="max-md:hidden" src={"/assets/link-dark.svg"} height={50} width={50} alt="" /></motion.h1>
+      <div className="flex items-center justify-center gap-5 px-5 max-lg:flex-wrap">
         <TextCard
           heading="Age Specific Learning"
           content="Socrates is designed to cater to the unique learning needs of students across different age groups. It tailors its approach by adjusting the complexity of questions, examples, and topics based on the student’s age and cognitive development."
