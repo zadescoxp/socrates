@@ -18,21 +18,21 @@ export default function Navbar() {
         />
       </Link>
       <span className="flex items-center gap-4 font-medium">
-        <motion.a
+        {/* <motion.a
           variants={textVar}
           initial="initial"
           animate="animate"
           href={"/about"}
-          className="hover:text-tertiary transition-all"
+          className="hover:text-tertiary transition-all max-md:hidden max-md:text-sm"
         >
           ABOUT
-        </motion.a>
+        </motion.a> */}
         <motion.a
           variants={textVar}
           initial="initial"
           animate="animate"
           href={"/chat"}
-          className="bg-secondary text-primary px-7 py-3 rounded-full hover:bg-tertiary transition-all"
+          className="max-md:text-sm bg-secondary text-primary px-7 py-3 rounded-full hover:bg-tertiary transition-all"
         >
           GET STARTED
         </motion.a>
