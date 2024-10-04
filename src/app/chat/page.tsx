@@ -105,7 +105,7 @@ export default function Chat() {
       animate="animate"
       className="h-[80dvh] flex justify-center items-center w-screen bg-primary"
     >
-      <div className="flex-col h-full w-3/4 relative">
+      <div className="flex-col h-full w-3/4 relative max-md:w-full max-md:px-4">
         <div
           ref={chatContainerRef}
           className="h-[95%] w-full flex flex-col pb-10 gap-4 overflow-scroll"
@@ -120,7 +120,7 @@ export default function Chat() {
               <div
                 className={`px-4 py-2 rounded-lg max-w-[90%] ${
                   msg.sender === "user"
-                    ? "bg-[#e2daabb6] rounded-lg"
+                    ? "bg-secondary text-primary rounded-lg"
                     : "bg-[#e2daabb6] rounded-lg"
                 }`}
               >
