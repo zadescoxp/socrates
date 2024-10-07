@@ -1,13 +1,19 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { slideUp } from "@/utils/variant";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import api from "@/utils/api";
 import RenderMarkdown from "@/utils/rednerMarkdown";
 import Link from "next/link";
+declare global {
+  interface Window {
+    webkitSpeechRecognition: any;
+  }
+}
 interface Message {
   id: number;
   sender: "user" | "bot";
@@ -33,10 +39,11 @@ export default function Chat() {
         "This is a minimal viable product (MVP) developed in just one day, so it may be a bit slow. More features and improvements are on the way!",
     },
   ]);
+  const inputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
-  const handleSendMessage = async () => {
+  const handleSendMessage = useCallback(async () => {
     if (inputValue.trim() === "") return;
 
     // Add user message
@@ -76,12 +83,11 @@ export default function Chat() {
         videos: (res.data as ResponseContent).videos,
         images: (res.data as ResponseContent).images,
       };
-      console.log(botResponse);
 
       setMessages((prevMessages) => [...prevMessages, botResponse]);
     }
     setLoading(false);
-  };
+  }, [inputValue, messages]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -98,6 +104,57 @@ export default function Chat() {
         chatContainerRef.current.scrollHeight;
     }
   }, [messages, loading]);
+
+  const [isRecording, setIsRecording] = useState<boolean>(false);
+  const [speaking, setSpeaking] = useState<boolean>(false);
+  const recognitionRef = useRef<any>(null);
+
+  const pressEnter = () => {
+    if (inputRef.current) {
+      const event = new KeyboardEvent("keydown", {
+        key: "Enter",
+        code: "Enter",
+        keyCode: 13,
+        which: 13,
+        bubbles: true,
+      });
+      inputRef.current.dispatchEvent(event);
+    }
+  };
+  const stopRecording = useCallback(async () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+    }
+    setSpeaking(false);
+    setIsRecording(false);
+    pressEnter();
+  }, []);
+
+  const startRecording = useCallback(async () => {
+    if (isRecording) {
+      stopRecording();
+      return;
+    }
+    setIsRecording(true);
+
+    recognitionRef.current = new window.webkitSpeechRecognition();
+    recognitionRef.current.continuous = true;
+    recognitionRef.current.interimResults = true;
+
+    recognitionRef.current.onresult = async (event: any) => {
+      const { transcript } = event.results[event.results.length - 1][0];
+      setSpeaking(true);
+
+      setInputValue(transcript);
+
+      if (event.results[event.results.length - 1].isFinal) {
+        stopRecording();
+      }
+    };
+
+    recognitionRef.current.start();
+  }, [isRecording, stopRecording]);
+
   return (
     <motion.div
       variants={slideUp}
@@ -212,6 +269,8 @@ export default function Chat() {
         </div>
         <div className="flex mt-2 items-center justify-center gap-2">
           <input
+            ref={inputRef}
+            disabled={isRecording}
             onChange={handleInputChange}
             className="border-2 border-secondary bg-[transparent] px-6 outline-none w-full py-3 rounded-full"
             type="text"
@@ -219,16 +278,11 @@ export default function Chat() {
             onKeyDown={handleKeyPress}
             placeholder="Let's Chat"
           />
-          <button>
+          <button
+            className={`${speaking ? "opacity-70" : "opacity-100"}`}
+            onClick={startRecording}
+          >
             <Image src={"/assets/mic.svg"} height={40} width={40} alt="Mic" />
-          </button>
-          <button>
-            <Image
-              src={"/assets/gallery.svg"}
-              height={45}
-              width={45}
-              alt="Gallery"
-            />
           </button>
         </div>
         <p className="text-sm py-2 pl-6 uppercase">Press enter to send</p>
