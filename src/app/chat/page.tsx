@@ -127,7 +127,10 @@ export default function Chat() {
     }
     setSpeaking(false);
     setIsRecording(false);
-    pressEnter();
+    const t = setTimeout(() => {
+      pressEnter()
+    }, 400);
+    return () => {clearTimeout(t)};
   }, []);
 
   const startRecording = useCallback(async () => {
